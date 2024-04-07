@@ -18,6 +18,8 @@ typedef struct BOARD{
     int** masu;
     int yoko,tate;
     bool finish_flag;
+    bool pc_win_flag;
+    bool me_win_flag;
     int pc_tate,pc_yoko;
     TURN turn;
 }BOARD;
@@ -192,6 +194,81 @@ void freeArray(BOARD* test){
 
 }
 void judge(BOARD *test){
+    test->me_win_flag = false;
+    test->pc_win_flag = false;
+    for (int  i = 0; i < SIDE; i++)
+    {
+        for (int j = 0; j < SIDE; j++)
+        {
+            if(test->masu[i][j] != UNDECI){
+                
+                if (test->masu[i][j] == CIRCLE)
+                //私の勝利
+                {
+                    //縦方向
+                    if (test->masu[i + 1][j] == CIRCLE && test->masu[i + 2][j] == CIRCLE)
+                    {
+                        test->me_win_flag = true;
+                    }
+                    //横方向
+                    if (test->masu[i][j + 1] == CIRCLE && test->masu[i][j + 2] == CIRCLE)
+                    {
+                        test->me_win_flag = true;
+                    }
+                    //斜め方向(左上-右下)
+                    if (test->masu[i + 1][j + 1] == CIRCLE && test->masu[i + 2][j + 2] == CIRCLE)
+                    {
+                        test->me_win_flag = true;
+                    }
+                    //斜め方向(左下-右上)
+                    if (test->masu[i + 1][j -1] == CIRCLE && test->masu[i + 2][j -2] == CIRCLE)
+                    {
+                        test->me_win_flag = true;
+                    }
+                }else{
+                //PCの勝利
+                    //縦方向
+                    if (test->masu[i + 1][j] == CROSS && test->masu[i + 2][j] == CROSS)
+                    {
+                        test->pc_win_flag = true;
+                    }
+                    //横方向
+                    if (test->masu[i][j + 1] == CROSS && test->masu[i][j + 2] == CROSS)
+                    {
+                        test->pc_win_flag = true;
+                    }
+                    //斜め方向(左上-右下)
+                    if (test->masu[i + 1][j + 1] == CROSS && test->masu[i + 2][j + 2] == CROSS)
+                    {
+                        test->pc_win_flag = true;
+                    }
+                    //斜め方向(左下-右上)
+                    if (test->masu[i + 1][j -1] == CROSS && test->masu[i + 2][j -2] == CROSS)
+                    {
+                        test->pc_win_flag = true;
+                    }
+                }
+                
+            }
+            
+        }
+    }
+    if (test->pc_win_flag == true)
+    {
+        printf("you win\n");
+        test->finish_flag = true;
+    }
+    if (test->pc_win_flag == true)
+    {
+        printf("you lose\n");
+        test->finish_flag = true;
+    }
+    
+    
+
+
+
+
     int circle_num = 0,cross_num = 0,undeci_num = 0; 
     for (int  i = 0; i < SIDE; i++)
     {
