@@ -17,7 +17,6 @@ typedef enum{MY_T,PC_T}TURN;
 typedef struct BOARD{
     int** masu;
     int yoko,tate;
-    bool finish_flag;
     bool pc_win_flag;
     bool me_win_flag;
     int pc_tate,pc_yoko;
@@ -36,21 +35,20 @@ void judge(BOARD *test);
 int main(void) {
     BOARD test;
     test.turn = MY_T;
-    test.finish_flag = false;
+    test.me_win_flag = false,test.pc_win_flag = false;
     srand((unsigned int)time(NULL));
     makeArray(&test);
     setup(test);
     show(test);
-    while (test.finish_flag == false)
+    while ((test.me_win_flag == false) && (test.pc_win_flag == false))
     {
         select(&test);
-        show(test);
         judge(&test);
+        show(test);
     }
-    printf("FINISH");
-    show(test);
-    if (test.me_win_flag == true) printf("YOU WIN");
-    else printf("PC WIN");
+    printf("FINISH\n");
+    if (test.me_win_flag == true) printf("YOU WIN\n");
+    else printf("PC WIN\n");
     freeArray(&test);
 
 }
@@ -87,7 +85,7 @@ void select(BOARD *test){
             }
         
         }
-        test->turn = PC_T;
+
     }else
     {
         printf("PC_");
@@ -122,7 +120,6 @@ void select(BOARD *test){
         }
         
 
-        test->turn = MY_T;
     }
 
 }
@@ -197,10 +194,8 @@ void freeArray(BOARD* test){
 
 }
 void judge(BOARD *test){
-    printf("test_01\n");
-    test->me_win_flag = false;
-    test->pc_win_flag = false;
-    int win_num = 3;
+    test->me_win_flag = false,test->pc_win_flag = false;
+    int win_num = SIDE;
     int mark = -1;
     if (test->turn == MY_T)
     {
@@ -222,8 +217,10 @@ void judge(BOARD *test){
         }
         if (count == win_num)
         {
-            test->me_win_flag = true;
+            if (mark == CIRCLE)test->me_win_flag = true;
+            else test->pc_win_flag = true;
             count = 0;
+            printf("yoko_flag");
             break;
         }
     }
@@ -241,28 +238,52 @@ void judge(BOARD *test){
         }
         if (count == win_num)
         {
-            test->me_win_flag = true;
+            if (mark == CIRCLE)test->me_win_flag = true;
+            else test->pc_win_flag = true;
             count = 0;
+            printf("tate_flag");
             break;
         }
     }
     
     //右下
     int count = 0;
-    for (int yoko = 0; yoko < SIDE; yoko++)
+    for (int k = 0; k < SIDE; k++)
     {
-        if (test->masu[yoko][yoko] == mark)
+        if (test->masu[k][k] == mark)
         {
             count++;
         }
     }
     if (count == win_num)
     {
-        test->me_win_flag = true;
+        if (mark == CIRCLE)test->me_win_flag = true;
+        else test->pc_win_flag = true;
+        printf("migisita_flag");
+    }
+
+    //左下
+    count = 0;
+    for (int k = 0; k < SIDE; k++)
+    {
+        if (test->masu[k][2 - k] == mark)
+            {
+                count++;
+            }
+            
+    }
+    if (count == win_num)
+    {
+        if (mark == CIRCLE)test->me_win_flag = true;
+        else test->pc_win_flag = true;
+        printf("hidarisita_flag");
     }
     count = 0;
 
-    //左下
-    
+    if ((test->me_win_flag == false) && (test->pc_win_flag == false))
+    {
+        if(mark == CIRCLE) test->turn = PC_T;
+        else test->turn = MY_T;
+    }
 
 }
