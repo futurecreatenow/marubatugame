@@ -203,15 +203,16 @@ void judge(BOARD *test){
     }else{
         mark = CROSS;
     }
+    int yoko = 0,tate = 0,count = 0;
     //横方向
-    for (int yoko = 0; yoko < SIDE; yoko++)
+    for (yoko = 0; yoko < SIDE; yoko++)
     {
-        int count = 0;
-        for (int tate = 0; tate < SIDE; tate++)
+        for (tate = 0; tate < SIDE; tate++)
         {
             if (test->masu[yoko][tate] == mark)
             {
                 count++;
+                printf("yoko:%d\n",tate + 1);
             }
             
         }
@@ -220,20 +221,23 @@ void judge(BOARD *test){
             if (mark == CIRCLE)test->me_win_flag = true;
             else test->pc_win_flag = true;
             count = 0;
-            printf("yoko_flag");
+            printf("yoko_flag\n");
             break;
         }
     }
 
+    count = 0;
     //縦方向
-    for (int tate = 0; tate < SIDE; tate++)
+    for (tate = 0; tate < SIDE; tate++)
     {
-        int count = 0;
-        for (int yoko = 0; yoko < count; yoko++)
+        printf("tate_00\n");
+        for (yoko = 0; yoko < count; yoko++)
         {
+            printf("tate_01\n");
             if (test->masu[yoko][tate] == mark)
             {
                 count++;
+                printf("tate:%d\n",yoko + 1);
             }
         }
         if (count == win_num)
@@ -241,13 +245,13 @@ void judge(BOARD *test){
             if (mark == CIRCLE)test->me_win_flag = true;
             else test->pc_win_flag = true;
             count = 0;
-            printf("tate_flag");
+            printf("tate_flag\n");
             break;
         }
     }
     
     //右下
-    int count = 0;
+    count = 0;
     for (int k = 0; k < SIDE; k++)
     {
         if (test->masu[k][k] == mark)
@@ -259,7 +263,7 @@ void judge(BOARD *test){
     {
         if (mark == CIRCLE)test->me_win_flag = true;
         else test->pc_win_flag = true;
-        printf("migisita_flag");
+        printf("migisita_flag\n");
     }
 
     //左下
@@ -276,7 +280,7 @@ void judge(BOARD *test){
     {
         if (mark == CIRCLE)test->me_win_flag = true;
         else test->pc_win_flag = true;
-        printf("hidarisita_flag");
+        printf("hidarisita_flag\n");
     }
     count = 0;
 
