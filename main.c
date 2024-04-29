@@ -203,6 +203,7 @@ void judge(BOARD *test){
     }else{
         mark = CROSS;
     }
+
     int yoko = 0,tate = 0,count = 0;
     //横方向
     for (yoko = 0; yoko < SIDE; yoko++)
@@ -224,16 +225,15 @@ void judge(BOARD *test){
             printf("yoko_flag\n");
             break;
         }
+        count = 0;
     }
 
     count = 0;
     //縦方向
     for (tate = 0; tate < SIDE; tate++)
     {
-        printf("tate_00\n");
-        for (yoko = 0; yoko < count; yoko++)
+        for (yoko = 0; yoko < SIDE; yoko++)
         {
-            printf("tate_01\n");
             if (test->masu[yoko][tate] == mark)
             {
                 count++;
@@ -248,6 +248,7 @@ void judge(BOARD *test){
             printf("tate_flag\n");
             break;
         }
+        count = 0;
     }
     
     //右下
@@ -257,6 +258,7 @@ void judge(BOARD *test){
         if (test->masu[k][k] == mark)
         {
             count++;
+            printf("migisita:%d\n",k + 1);
         }
     }
     if (count == win_num)
@@ -273,6 +275,7 @@ void judge(BOARD *test){
         if (test->masu[k][2 - k] == mark)
             {
                 count++;
+                printf("hidarisita:%d\n",k + 1);
             }
             
     }
@@ -289,5 +292,6 @@ void judge(BOARD *test){
         if(mark == CIRCLE) test->turn = PC_T;
         else test->turn = MY_T;
     }
+    //引き分け判定を書く（表示のマルバツの個数を数えるところを参考にする）
 
 }
