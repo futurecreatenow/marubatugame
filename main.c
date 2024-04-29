@@ -15,12 +15,13 @@ typedef enum{MY_T,PC_T}TURN;
 
 
 typedef struct BOARD{
-    int** masu;
-    int yoko,tate;
-    bool pc_win_flag;
-    bool me_win_flag;
-    int pc_tate,pc_yoko;
-    TURN turn;
+    int** masu; //マス目の情報
+    int yoko,tate; //横と縦の座標
+    bool me_win_flag; //私の勝利のフラグ
+    bool pc_win_flag; //PCの勝利のフラグ
+    bool draw_flag; //引き分けのフラグ
+    int pc_tate,pc_yoko; //pcの横座標と縦座標
+    TURN turn; //どちらのターンか
 }BOARD;
 
 //プロトタイプ宣言
@@ -35,12 +36,12 @@ void judge(BOARD *test);
 int main(void) {
     BOARD test;
     test.turn = MY_T;
-    test.me_win_flag = false,test.pc_win_flag = false;
+    test.me_win_flag = false,test.pc_win_flag = false,test.draw_flag = false;
     srand((unsigned int)time(NULL));
     makeArray(&test);
     setup(test);
     show(test);
-    while ((test.me_win_flag == false) && (test.pc_win_flag == false))
+    while ((test.me_win_flag == false) && (test.pc_win_flag == false) && (test.draw_flag == false))
     {
         select(&test);
         judge(&test);
@@ -48,7 +49,8 @@ int main(void) {
     }
     printf("FINISH\n");
     if (test.me_win_flag == true) printf("YOU WIN\n");
-    else printf("PC WIN\n");
+    else if (test.pc_win_flag == true) printf("PC WIN\n");
+    else if (test.draw_flag == true) printf("DRAW");
     freeArray(&test);
 
 }
@@ -136,15 +138,13 @@ void setup(BOARD test){
     }
 }
 void show(BOARD test){
-    int circle_num = 0,cross_num = 0,undeci_num = 0; 
+    int undeci_num = 0; 
     for (int  yoko = 0; yoko < SIDE; yoko++)
     {
         for (int tate = 0; tate < SIDE; tate++)
         {
             switch (test.masu[yoko][tate])
             {
-                case CIRCLE:circle_num++;break;
-                case CROSS:cross_num++;break;
                 case UNDECI:undeci_num++;break;
                 default:break;
             }
@@ -154,9 +154,6 @@ void show(BOARD test){
     if (test.turn == MY_T) printf("########YOUR TURN########\n");
     else printf("##########PC TURN########\n");
     
-    printf("\n");
-    printf("ME:o>>>%d\n",circle_num);
-    printf("PC:x>>>%d\n",cross_num);
     printf("\n");
     printf("  012\n");
     for (int  yoko = 0; yoko < SIDE; yoko++)
@@ -213,7 +210,6 @@ void judge(BOARD *test){
             if (test->masu[yoko][tate] == mark)
             {
                 count++;
-                printf("yoko:%d\n",tate + 1);
             }
             
         }
@@ -222,7 +218,6 @@ void judge(BOARD *test){
             if (mark == CIRCLE)test->me_win_flag = true;
             else test->pc_win_flag = true;
             count = 0;
-            printf("yoko_flag\n");
             break;
         }
         count = 0;
@@ -237,7 +232,6 @@ void judge(BOARD *test){
             if (test->masu[yoko][tate] == mark)
             {
                 count++;
-                printf("tate:%d\n",yoko + 1);
             }
         }
         if (count == win_num)
@@ -245,7 +239,6 @@ void judge(BOARD *test){
             if (mark == CIRCLE)test->me_win_flag = true;
             else test->pc_win_flag = true;
             count = 0;
-            printf("tate_flag\n");
             break;
         }
         count = 0;
@@ -258,14 +251,12 @@ void judge(BOARD *test){
         if (test->masu[k][k] == mark)
         {
             count++;
-            printf("migisita:%d\n",k + 1);
         }
     }
     if (count == win_num)
     {
         if (mark == CIRCLE)test->me_win_flag = true;
         else test->pc_win_flag = true;
-        printf("migisita_flag\n");
     }
 
     //左下
@@ -275,7 +266,6 @@ void judge(BOARD *test){
         if (test->masu[k][2 - k] == mark)
             {
                 count++;
-                printf("hidarisita:%d\n",k + 1);
             }
             
     }
@@ -283,15 +273,38 @@ void judge(BOARD *test){
     {
         if (mark == CIRCLE)test->me_win_flag = true;
         else test->pc_win_flag = true;
-        printf("hidarisita_flag\n");
     }
     count = 0;
 
-    if ((test->me_win_flag == false) && (test->pc_win_flag == false))
+
+    //引き分け判定
+    int circle_num = 0,cross_num = 0,undeci_num = 0; 
+    for (int  yoko = 0; yoko < SIDE; yoko++)
+    {
+        for (int tate = 0; tate < SIDE; tate++)
+        {
+            switch (test->masu[yoko][tate])
+            {
+                case CIRCLE:circle_num++;break;
+                case CROSS:cross_num++;break;
+                case UNDECI:undeci_num++;break;
+                default:break;
+            }
+            
+        }
+    }
+    
+    if ((undeci_num == ZERO)&& (FULL_CELL == circle_num + cross_num))
+    {
+        test->draw_flag = true;
+    }
+    
+
+    if ((test->me_win_flag == false) && (test->pc_win_flag == false) && (test->draw_flag == false))
     {
         if(mark == CIRCLE) test->turn = PC_T;
         else test->turn = MY_T;
     }
-    //引き分け判定を書く（表示のマルバツの個数を数えるところを参考にする）
+
 
 }
